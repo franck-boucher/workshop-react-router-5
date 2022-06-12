@@ -25,7 +25,6 @@ export const SideMenuContextProvider = ({
   const [tasksToValidate, setTasksToValidate] = useState<number>(0);
 
   const fetchTasksToValidate = useCallback(async () => {
-    console.log("fetchTasksToValidate");
     const tasks = await getNumberOfTasksToValidate();
     setTasksToValidate(tasks);
   }, []);
