@@ -1,16 +1,21 @@
 import { ActionIcon, Group, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "tabler-icons-react";
-import BillItem from "../components/BillItem";
+import BillItem, { BillItemSkeleton } from "../components/BillItem";
 import Page from "../components/Page";
 import { Bill, getBillsForYear } from "../utils/bills";
 
 export default function Bills() {
   const [year, setYear] = useState(() => new Date().getFullYear());
-  const [bills, setBills] = useState<Bill[]>([]);
+  const [bills, setBills] = useState<Bill[]>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getBillsForYear(year).then((bills) => setBills(bills));
+    setLoading(true);
+    getBillsForYear(year).then((bills) => {
+      setBills(bills);
+      setLoading(false);
+    });
   }, [year]);
 
   const plusOne = () => setYear(year + 1);
@@ -31,9 +36,11 @@ export default function Bills() {
       }
     >
       <Stack spacing="xs">
-        {bills.map((bill) => (
-          <BillItem key={bill.id} bill={bill} />
-        ))}
+        {!bills || loading
+          ? Array.from({ length: 12 }).map((_, i) => (
+              <BillItemSkeleton key={i} />
+            ))
+          : bills.map((bill) => <BillItem key={bill.id} bill={bill} />)}
       </Stack>
     </Page>
   );
